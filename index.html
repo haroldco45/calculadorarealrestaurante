@@ -3,143 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Costeo Real para Restaurante</title>
+    <title>Calculadora Real Pro </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; background-color: #f0f2f5; }
+        .gradient-brand { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+    </div>
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-2 md:p-6 pb-20">
 
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl overflow-hidden card-shadow">
-        <div class="bg-slate-800 p-6 text-white flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight">CALCULADORA REAL <span class="text-yellow-500">RESTAURANTE</span></h1>
-                <p id="reloj" class="text-sm text-slate-400 font-mono"></p>
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <div class="gradient-brand rounded-3xl p-8 text-white shadow-2xl flex flex-col md:flex-row justify-between items-center border-b-4 border-yellow-500">
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl font-900 tracking-tight text-yellow-500">CALCULADORA REAL <span class="text-white font-light">PRO</span></h1>
+                <p id="fecha-colombia" class="text-sm font-mono opacity-70 mt-1"></p>
             </div>
-            <div class="text-right border-l-2 border-yellow-500 pl-4">
-                <p class="text-xs uppercase font-bold text-yellow-500">Control de Insumos</p>
-                <p class="text-xl font-black">COLOMBIA</p>
-            </div>
-        </div>
-
-        <div class="p-6 md:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-bold text-slate-700 mb-2 uppercase">Nombre del Producto / Receta</label>
-                    <input type="text" id="plato" placeholder="Ej. Hamburguesa Houston Pro" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 transition">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2 uppercase">Margen de Utilidad (%)</label>
-                    <input type="number" id="margen" value="35" oninput="calcular()" class="w-full p-4 bg-yellow-50 border border-yellow-200 rounded-xl focus:outline-none font-bold text-xl text-center">
-                </div>
-            </div>
-
-            <div class="overflow-x-auto mb-8">
-                <table class="w-full border-collapse text-left">
-                    <thead>
-                        <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
-                            <th class="p-4 rounded-tl-xl font-black">Insumo</th>
-                            <th class="p-4 font-black text-center">Peso Bruto (g/ml)</th>
-                            <th class="p-4 font-black text-center text-red-600">Merma %</th>
-                            <th class="p-4 font-black text-center">Costo Unit. (Kg/Lt)</th>
-                            <th class="p-4 rounded-tr-xl font-black text-right">Costo Neto</th>
-                        </tr>
-                    </thead>
-                    <tbody id="filas">
-                        <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                            <td class="p-4"><input type="text" placeholder="Insumo 1" class="w-full bg-transparent outline-none font-medium"></td>
-                            <td class="p-4 text-center"><input type="number" placeholder="0" oninput="calcular()" class="w-24 p-2 bg-white border border-slate-200 rounded-lg text-center bruto"></td>
-                            <td class="p-4 text-center"><input type="number" placeholder="0" oninput="calcular()" class="w-20 p-2 bg-red-50 border border-red-100 rounded-lg text-center text-red-600 merma"></td>
-                            <td class="p-4 text-center"><input type="number" placeholder="0" oninput="calcular()" class="w-28 p-2 bg-white border border-slate-200 rounded-lg text-center costo-u"></td>
-                            <td class="p-4 text-right font-bold text-slate-800 subtotal">$ 0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <button onclick="agregarFila()" class="mb-8 flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition">
-                <span>+</span> Agregar Ingrediente
-            </button>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">Costo Total Receta</p>
-                    <h2 id="total-costo" class="text-2xl font-black text-slate-800">$ 0</h2>
-                </div>
-                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">Utilidad Bruta</p>
-                    <h2 id="total-utilidad" class="text-2xl font-black text-green-600">$ 0</h2>
-                </div>
-                <div class="p-6 bg-slate-800 rounded-2xl border border-slate-700 shadow-lg">
-                    <p class="text-xs font-bold text-slate-400 uppercase mb-2">PVP Sugerido (Con Margen)</p>
-                    <h2 id="pvp" class="text-3xl font-black text-yellow-500">$ 0</h2>
-                </div>
+            <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-md mt-4 md:mt-0 text-center">
+                <p class="text-[10px] uppercase font-bold tracking-widest text-yellow-400">Estado Mercado Col</p>
+                <p class="text-lg font-bold">ALTA VOLATILIDAD</p>
             </div>
         </div>
 
-        <div class="p-6 bg-slate-50 border-t border-slate-200 text-center">
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                Créditos de Derechos de Autor © Vibras Positivas HM - 2026
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <span class="bg-yellow-500 w-2 h-6 rounded-full"></span> 
+                        COSTEO DE MATERIA PRIMA
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <input type="text" id="plato" placeholder="Nombre del plato (Ej: Houston Burger)" class="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-yellow-500 outline-none font-bold text-slate-700">
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="text-[10px] uppercase text-gray-400 font-black tracking-widest">
+                                    <tr>
+                                        <th class="pb-3">Insumo</th>
+                                        <th class="pb-3 text-center">Peso Bruto(g)</th>
+                                        <th class="pb-3 text-center">Merma%</th>
+                                        <th class="pb-3 text-center">Costo Kg</th>
+                                        <th class="pb-3 text-right">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="filas-insumos">
+                                    <tr class="border-t border-gray-50">
+                                        <td class="py-3"><input type="text" placeholder="Carne" class="w-full bg-transparent text-sm font-semibold outline-none"></td>
+                                        <td><input type="number" oninput="ejecutarCalculos()" class="w-20 mx-auto block text-center bg-gray-50 rounded-lg p-2 text-sm val-bruto"></td>
+                                        <td><input type="number" oninput="ejecutarCalculos()" class="w-16 mx-auto block text-center bg-red-50 text-red-600 rounded-lg p-2 text-sm val-merma"></td>
+                                        <td><input type="number" oninput="ejecutarCalculos()" class="w-24 mx-auto block text-center bg-gray-50 rounded-lg p-2 text-sm val-costo"></td>
+                                        <td class="text-right font-bold text-sm text-slate-800 val-subtotal">$ 0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button onclick="nuevaFila()" class="w-full py-3 rounded-2xl border-2 border-dashed border-gray-200 text-gray-400 font-bold hover:bg-gray-50 transition">
+                            + AGREGAR INGREDIENTE
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm">
+                        <p class="text-xs font-bold text-gray-400 uppercase">Costo (CMV)</p>
+                        <h3 id="res-costo" class="text-2xl font-900 text-slate-800">$ 0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm">
+                        <p class="text-xs font-bold text-gray-400 uppercase">Utilidad Real</p>
+                        <h3 id="res-utilidad" class="text-2xl font-900 text-green-600">$ 0</h3>
+                    </div>
+                    <div class="bg-yellow-500 p-6 rounded-3xl shadow-lg">
+                        <p class="text-xs font-bold text-yellow-900 uppercase">PVP Sugerido</p>
+                        <h3 id="res-pvp" class="text-2xl font-900 text-slate-900">$ 0</h3>
+                        <div class="mt-2 flex items-center gap-2">
+                            <input type="number" id="margen-input" value="35" oninput="ejecutarCalculos()" class="w-10 bg-transparent border-b border-yellow-900 font-bold outline-none text-yellow-900">% Margen
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-slate-800 text-white rounded-3xl p-6 shadow-xl">
+                    <h2 class="text-yellow-500 font-bold uppercase text-xs tracking-widest mb-4">Análisis de Resultados</h2>
+                    <div id="analisis-texto" class="text-sm space-y-3 text-slate-300 italic">
+                        "Ingresa datos para obtener una lectura del rendimiento de tu plato..."
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200">
+                    <h2 class="text-slate-800 font-bold uppercase text-xs tracking-widest mb-4">Tendencia Colombia 2026</h2>
+                    <ul class="text-xs space-y-4">
+                        <li class="flex gap-3">
+                            <span class="bg-green-100 text-green-600 p-2 rounded-lg h-fit font-bold">1</span>
+                            <p><strong class="text-slate-700">Proteína Animal:</strong> El costo de la res en el Bajo Cauca se mantiene al alza. Se sugiere margen del 40% en platos de carne.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="bg-blue-100 text-blue-600 p-2 rounded-lg h-fit font-bold">2</span>
+                            <p><strong class="text-slate-700">Mermas:</strong> En vegetales de clima frío traídos a la zona, la merma sube al 15% por humedad. ¡Calcula siempre el desperdicio!</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="bg-purple-100 text-purple-600 p-2 rounded-lg h-fit font-bold">3</span>
+                            <p><strong class="text-slate-700">Psicología de Precios:</strong> El consumidor colombiano actual prefiere combos con "bebida incluida" aunque el PVP suba un 10%.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center py-6">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+                Vibras Positivas HM - Derechos de Autor © 2026
             </p>
         </div>
     </div>
 
     <script>
-        // Reloj Colombia
-        function updateClock() {
-            const now = new Date();
-            const options = { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: 'long', year: 'numeric' };
-            document.getElementById('reloj').innerText = now.toLocaleDateString('es-CO', options).toUpperCase();
+        function actualizarReloj() {
+            const opciones = { timeZone: 'America/Bogota', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('fecha-colombia').innerText = new Intl.DateTimeFormat('es-CO', opciones).format(new Date()).toUpperCase();
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(actualizarReloj, 1000);
+        actualizarReloj();
 
-        function agregarFila() {
-            const tbody = document.getElementById('filas');
-            const row = document.createElement('tr');
-            row.className = "border-b border-slate-100 hover:bg-slate-50 transition";
-            row.innerHTML = `
-                <td class="p-4"><input type="text" placeholder="Nuevo Insumo" class="w-full bg-transparent outline-none font-medium"></td>
-                <td class="p-4 text-center"><input type="number" placeholder="0" oninput="calcular()" class="w-24 p-2 bg-white border border-slate-200 rounded-lg text-center bruto"></td>
-                <td class="p-4 text-center"><input type="number" placeholder="0" oninput="calcular()" class="w-20 p-2 bg-red-50 border border-red-100 rounded-lg text-center text-red-600 merma"></td>
-                <td class="p-4 text-center"><input type="number" placeholder="0" oninput="calcular()" class="w-28 p-2 bg-white border border-slate-200 rounded-lg text-center costo-u"></td>
-                <td class="p-4 text-right font-bold text-slate-800 subtotal">$ 0</td>
+        function nuevaFila() {
+            const tbody = document.getElementById('filas-insumos');
+            const tr = document.createElement('tr');
+            tr.className = "border-t border-gray-50";
+            tr.innerHTML = `
+                <td class="py-3"><input type="text" placeholder="Insumo" class="w-full bg-transparent text-sm font-semibold outline-none"></td>
+                <td><input type="number" oninput="ejecutarCalculos()" class="w-20 mx-auto block text-center bg-gray-50 rounded-lg p-2 text-sm val-bruto"></td>
+                <td><input type="number" oninput="ejecutarCalculos()" class="w-16 mx-auto block text-center bg-red-50 text-red-600 rounded-lg p-2 text-sm val-merma"></td>
+                <td><input type="number" oninput="ejecutarCalculos()" class="w-24 mx-auto block text-center bg-gray-50 rounded-lg p-2 text-sm val-costo"></td>
+                <td class="text-right font-bold text-sm text-slate-800 val-subtotal">$ 0</td>
             `;
-            tbody.appendChild(row);
+            tbody.appendChild(tr);
         }
 
-        function calcular() {
-            const rows = document.querySelectorAll('#filas tr');
-            let granTotalCosto = 0;
+        function ejecutarCalculos() {
+            const filas = document.querySelectorAll('#filas-insumos tr');
+            let costoTotal = 0;
 
-            rows.forEach(row => {
-                const bruto = parseFloat(row.querySelector('.bruto').value) || 0;
-                const mermaPct = parseFloat(row.querySelector('.merma').value) || 0;
-                const costoUnidad = parseFloat(row.querySelector('.costo-u').value) || 0;
+            filas.forEach(f => {
+                const bruto = parseFloat(f.querySelector('.val-bruto').value) || 0;
+                const merma = parseFloat(f.querySelector('.val-merma').value) || 0;
+                const costoKg = parseFloat(f.querySelector('.val-costo').value) || 0;
 
-                // Lógica Siigo: Costo Real = Costo x Kg ajustado por rendimiento de merma
-                // Peso Neto = Bruto * (1 - Merma%)
-                // Sin embargo, el restaurante paga por el Bruto. El costo del ingrediente en el plato es (Bruto/1000) * CostoKg
-                const subtotal = (bruto / 1000) * costoUnidad;
-                
-                row.querySelector('.subtotal').innerText = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(subtotal);
-                granTotalCosto += subtotal;
+                // El costo real es sobre el bruto que pagas. La merma te dice qué tanto aprovechas.
+                const sub = (bruto / 1000) * costoKg;
+                f.querySelector('.val-subtotal').innerText = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(sub);
+                costoTotal += sub;
             });
 
-            const margenPct = parseFloat(document.getElementById('margen').value) || 0;
-            const factorMargen = 1 - (margenPct / 100);
+            const margen = parseFloat(document.getElementById('margen-input').value) || 0;
+            const pvp = costoTotal / (1 - (margen / 100));
+            const utilidad = pvp - costoTotal;
+
+            const format = (v) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+
+            document.getElementById('res-costo').innerText = format(costoTotal);
+            document.getElementById('res-utilidad').innerText = format(utilidad);
+            document.getElementById('res-pvp').innerText = format(pvp);
+
+            generarSugerencia(costoTotal, pvp, margen);
+        }
+
+        function generarSugerencia(costo, pvp, margen) {
+            const caja = document.getElementById('analisis-texto');
+            if(costo === 0) return;
+
+            let texto = "";
+            if(margen < 30) {
+                texto = "⚠️ <b class='text-red-400'>Alerta de Rentabilidad:</b> Tu margen está por debajo del promedio en Colombia (35%). Considera reducir porciones o revisar mermas para no trabajar a pérdida.";
+            } else if(margen >= 30 && margen <= 45) {
+                texto = "✅ <b class='text-green-400'>Punto Óptimo:</b> Estás en el rango competitivo. Con este PVP puedes cubrir gastos fijos y nómina en el mercado colombiano.";
+            } else {
+                texto = "⭐ <b class='text-yellow-400'>Premium:</b> Tu margen es alto. Asegúrate de que la experiencia y calidad justifiquen este precio frente a la competencia.";
+            }
             
-            // Precio Venta Público Sugerido
-            const pvp = factorMargen > 0 ? (granTotalCosto / factorMargen) : 0;
-            const utilidad = pvp - granTotalCosto;
-
-            const format = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
-
-            document.getElementById('total-costo').innerText = format(granTotalCosto);
-            document.getElementById('total-utilidad').innerText = format(utilidad);
-            document.getElementById('pvp').innerText = format(pvp);
+            caja.innerHTML = texto + `<br><br>💡 <b>Sugerencia:</b> El costo de este plato es de ${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(costo)}. Si el mercado no tolera el precio de ${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(pvp)}, busca sustitutos de materia prima locales.`;
         }
     </script>
 </body>
