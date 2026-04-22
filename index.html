@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Real - Restaurante</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-md mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+        <div class="bg-gradient-to-r from-green-600 to-green-800 p-6 text-white text-center">
+            <h1 class="text-2xl font-800 tracking-tight">CALCULADORA REAL</h1>
+            <p class="text-xs opacity-80" id="fecha-actual"></p>
+        </div>
+
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Plato / Receta</label>
+                <input type="text" id="nombrePlato" placeholder="Ej: Houston Burger" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none">
+            </div>
+
+            <div id="lista-ingredientes" class="space-y-3">
+                <div class="flex gap-2 items-center bg-gray-50 p-2 rounded-lg border border-gray-100">
+                    <input type="text" placeholder="Ingrediente" class="w-1/3 p-2 text-sm bg-transparent border-b border-gray-300">
+                    <input type="number" placeholder="Costo" class="w-1/4 p-2 text-sm bg-transparent border-b border-gray-300 cost-input" oninput="calcularTotal()">
+                    <span class="text-xs text-gray-400">COP</span>
+                </div>
+            </div>
+
+            <button onclick="agregarFila()" class="w-full py-2 border-2 border-dashed border-green-400 text-green-600 rounded-xl font-bold hover:bg-green-50 transition">
+                + AGREGAR MATERIA PRIMA
+            </button>
+
+            <hr class="my-6">
+
+            <div class="bg-gray-900 rounded-2xl p-5 text-white space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Costo Total Materia Prima:</span>
+                    <span id="totalMateriaPrima" class="font-bold text-green-400">$ 0</span>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Margen de Utilidad Deseado:</span>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="margenDeseado" value="35" class="w-12 bg-transparent border-b border-green-400 text-center font-bold outline-none" oninput="calcularTotal()">
+                        <span class="text-green-400">%</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-700 text-center">
+                    <p class="text-xs text-gray-400 uppercase tracking-widest">Precio de Venta Sugerido (Real)</p>
+                    <h2 id="precioSugerido" class="text-3xl font-800 text-white mt-1">$ 0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 text-center bg-gray-50">
+            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">
+                Derechos de Autor © Vibras Positivas HM - 2026
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Actualizar Fecha y Hora Colombia
+        function actualizarReloj() {
+            const opciones = { 
+                timeZone: 'America/Bogota', 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            const ahora = new Intl.DateTimeFormat('es-CO', opciones).format(new Date());
+            document.getElementById('fecha-actual').innerText = ahora.toUpperCase();
+        }
+        setInterval(actualizarReloj, 1000);
+        actualizarReloj();
+
+        function agregarFila() {
+            const div = document.createElement('div');
+            div.className = "flex gap-2 items-center bg-gray-50 p-2 rounded-lg border border-gray-100";
+            div.innerHTML = `
+                <input type="text" placeholder="Ingrediente" class="w-1/3 p-2 text-sm bg-transparent border-b border-gray-300">
+                <input type="number" placeholder="Costo" class="w-1/4 p-2 text-sm bg-transparent border-b border-gray-300 cost-input" oninput="calcularTotal()">
+                <span class="text-xs text-gray-400">COP</span>
+            `;
+            document.getElementById('lista-ingredientes').appendChild(div);
+        }
+
+        function calcularTotal() {
+            let totalMateria = 0;
+            const inputs = document.querySelectorAll('.cost-input');
+            const margen = parseFloat(document.getElementById('margenDeseado').value) || 0;
+
+            inputs.forEach(input => {
+                totalMateria += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalMateriaPrima').innerText = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(totalMateria);
+
+            // Fórmula Real de Precio: Costo / (1 - (Margen/100))
+            if(margen < 100 && margen > 0) {
+                const precio = totalMateria / (1 - (margen / 100));
+                document.getElementById('precioSugerido').innerText = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio);
+            } else {
+                document.getElementById('precioSugerido').innerText = "$ ---";
+            }
+        }
+    </script>
+</body>
+</html>
